@@ -3,8 +3,8 @@ from requests import get
 import pandas as pd
 
 allcars= list()
-cols = ['model', 'city', 'productionyear','milage','engine', 'price']
-for x in range(1,2):
+cols = ['model', 'city', 'productionyear','milage','engine', 'price','photo','link']
+for x in range(1,500):
     
     URL= "https://www.otomoto.pl/osobowe/audi?page="+str(x)
     print (x)
@@ -17,13 +17,37 @@ for x in range(1,2):
         carelems = list()
         model = offers.find("h2", class_="e1b25f6f6 e1b25f6f19 ooa-10p8u4x er34gjf0").get_text()
         city = offers.find ("span", class_="ooa-fzu03x").get_text()
-        scrapthislater = offers.find("ul")
-        text = list(scrapthislater.descendants)
+        scrapthislater = offers.find("ul")#split it to 3 elements
+        for li in scrapthislater.findAll('li'):
+            carelems.append(li.get_text())
+        if (offers.find("a", href=True) is not None):
+            
+            link =offers.find("a", href=True)
+            link = link['href']
+        price = offers.find("span", class_="ooa-1bmnxg7 e1b25f6f11").get_text()
+        
+            
+        
+        
+        if (offers.find("img") is not None):
+            photo = offers.find("img")
+            photo = photo['src']
+        
+        if (len(carelems)==4):
+            productionyear = carelems[0]
+            milage= carelems[1]
+            engine=carelems[2]
+        else:
+            productionyear = 'unknown'
+            milage= 'unknown'
+            engine='unknown'
+            
+        
+        things= [model,city,productionyear,milage,engine, price,photo, link]
+        
+        allcars.append(things)
+        
 
-        print (text[0])
-        
-        price = offers.find ("span", class_="ooa-1bmnxg7 e1b25f6f11").get_text()
-        
-       
-        things= [model,city, price]
-        
+cardata = pd.DataFrame(allcars,columns = cols)
+cardata.to_csv('carsdata.csv',encoding='utf-16')
+
