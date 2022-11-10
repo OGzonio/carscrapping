@@ -4,7 +4,7 @@ import pandas as pd
 
 allcars= list()
 cols = ['model', 'city', 'productionyear','milage','engine', 'price']
-for x in range(1,500):
+for x in range(1,2):
     
     URL= "https://www.otomoto.pl/osobowe/audi?page="+str(x)
     print (x)
@@ -18,17 +18,12 @@ for x in range(1,500):
         model = offers.find("h2", class_="e1b25f6f6 e1b25f6f19 ooa-10p8u4x er34gjf0").get_text()
         city = offers.find ("span", class_="ooa-fzu03x").get_text()
         scrapthislater = offers.find("ul")
-        for li in scrapthislater.findAll('li'):
-            carelems.append(li.get_text())
+        text = list(scrapthislater.descendants)
+
+        print (text[0])
         
         price = offers.find ("span", class_="ooa-1bmnxg7 e1b25f6f11").get_text()
         
-        if (len(carelems)==4):
-            productionyear = carelems[0]
-            milage= carelems[1]
-            engine=carelems[2]
+       
+        things= [model,city, price]
         
-        things= [model,city,productionyear,milage,engine, price]
-        allcars.append(things)
-cardata = pd.DataFrame(allcars,columns = cols)
-cardata.to_csv('carzall.csv',encoding='utf-16')
